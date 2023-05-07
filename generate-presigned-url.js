@@ -109,7 +109,7 @@ function signUrl(
 }
 
 // Dashboard->Stream->Security->Token Authentication Key
-var securityKey = "f57fa13d-9e3b-4539-b03c-05cbddec2102";
+var tokenAuthenticationKey = "f57fa13d-9e3b-4539-b03c-05cbddec2102";
 // Dashboard->Stream->API->PullZone
 let pullZone = "vz-3be710f9-1bd";
 //Dashboard->Manage Library->video
@@ -119,7 +119,7 @@ let playlist = "playlist.m3u8"
 
 var signedUrl = signUrl(
   "https://vz-3be710f9-1bd.b-cdn.net/5a603ce5-6091-4dce-a0cc-49bc295fee87",
-  securityKey,
+  tokenAuthenticationKey,
   7200,
   "",
   true,
