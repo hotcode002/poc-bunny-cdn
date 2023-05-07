@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<script src="https://cdn.jsdelivr.net/npm/tus-js-client@latest/dist/tus.min.js"></script>
+<script>
+    window.onload = function () {
+
+        const input = document.querySelector("#video");
+        console.log(input)
+        input.addEventListener('change', function (e) {
+            // Get the selected file from the input element
+            var file = e.target.files[0]
+
+            // Create a new tus upload
+            var upload = new tus.Upload(file, {
+                endpoint: 'https://video.bunnycdn.com/tusupload',
+                retryDelays: [0, 3000, 5000, 10000, 20000],
+                headers: {
+                    // SHA256 signature (library_id + api_key + expiration_time + video_id)
+                    AuthorizationSignature: "9b9251a3f364df4262dbba94285be29b53e09899df801a638c79d06d12e14f1f",
+                    // Expiration time as in the signature,
+                    AuthorizationExpire: 1683497068105,
+                    // The guid of a previously created video object through the Create Video API call 
+                    VideoId: "4593c6cf-cfda-4f7a-b1e0-91af83c65211",
+                    LibraryId: 118499,
+                },
+                metadata: {
+                    filetype: file.type,
+                    title: "Python for Beginners - from web",
+                    collection: "collectionID"
+                },
+                onError: function (error) {
+                    console.log('Failed because: ' + error)
+                },
+                onProgress: function (bytesUploaded, bytesTotal) {
+                    var percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2)
+                    console.log(bytesUploaded, bytesTotal, percentage + '%')
+                },
+                onSuccess: function () {
+                    console.log('Download %s from %s', upload.file.name, upload.url)
+                },
+            })
+
+            // Check if there are any previous uploads to continue.
+            upload.findPreviousUploads().then(function (previousUploads) {
+                // Found previous uploads so we select the first one.
+                if (previousUploads.length) {
+                    upload.resumeFromPreviousUpload(previousUploads[0])
+                }
+
+                // Start the upload
+                upload.start()
+            })
+        })
+    }
+
+
+</script>
+
+<body>
+    <input type="file" id="video" name="video" accept="video/*">
+</body>
+
+</html>
